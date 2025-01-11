@@ -1,0 +1,38 @@
+
+1)how long sausage has been a family member
+
+match (n)-[r:HAS_A_DOG]->(m)where n.name='Teresa' and m.name='Sausage' return r.since as Adoption_date
+
+match (n)-[r:HAS_A_DOG]->(m)where n.name='Teresa' and m.name='Sausage' UNWIND[duration.inDays(r.since, date("2024-10-15"))] as aDuration return aDuration.days
+
+
+2) how old is everyone
+
+match (n {name:'Teresa'}), (m {name:'Dad'}), (b {name:'Weronika'}), (v {name:'Monika'}), (c {name:'Sausage'}) with [n.name, m.name,b.name,v.name,c.name] as First_names, [n.age,m.age,b.age,v.age,c.age] as Ages return First_names as First_names, Ages as Ages
+
+or
+
+Create (n:FAMIy)
+Match (n {name’Teresa’}) set n:FAMILY return n
+Match (n {name’Dad’}) set n:FAMILY return n
+Match (n {name’Sausage’}) set n:FAMILY return n
+Match (n:FAMILY) return collect(n.name) as names, collect(n.age) as ages
+
+
+4) what’s moms and dads name
+
+match (n)-[r:ARE_MARRIED]->(m) return n.name as Mom_name, m.name as Dad_name
+
+5) walks schedule
+
+match (m)-[r:IS_TAKEN_FOR_A_WALK_BY]->(n) where m.name = 'Sausage' and n.name = ‚Monika’ set r.hour = 7 return m,n
+match (m)-[r:IS_TAKEN_FOR_A_WALK_BY]->(n) where m.name = 'Sausage' and n.name = ‚Weronika’ set r.hour = 14 return m,n
+match (m)-[r:IS_TAKEN_FOR_A_WALK_BY]->(n) where m.name = 'Sausage' and n.name = 'Teresa' set r.hour = 20 return m,n
+
+match (m)-[r:IS_TAKEN_FOR_A_WALK_BY]->(n) where m.name = 'Sausage' and n.name = 'Monika' match (o)-[s:IS_TAKEN_FOR_A_WALK_BY]->(p) where o.name = 'Sausage' and p.name = 'Weronika' match (a)-[t:IS_TAKEN_FOR_A_WALK_BY]->(b) where a.name = 'Sausage' and b.name = ‚Teresa’ return r.hour as morning, s.hour as noon, t.hour as evening
+
+
+6) average rating 
+match (n {name:'Vet_Visit'}) set n.rating=[4.5, 3.0] return n
+match (n {name:'Vet_Visit'}) with n.rating as values unwind values as value return avg(value) as average
+
